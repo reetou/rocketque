@@ -18,13 +18,6 @@ window.onresize = () => {
   app.renderer.resize(innerWidth, innerHeight)
   rocket.x = app.renderer.width / 2 - rocket.width / 3;
 };
-loader
-  .add('ya', 'src/img/ya.jpg')
-  .load((l, r) => {
-    const texture = r.ya.texture;
-    const sprite = new PIXI.Sprite(texture);
-    // app.stage.addChild(sprite);
-  });
 
 const cosmoBackground = new PIXI.Container();
 
@@ -106,9 +99,24 @@ function createHealthBar(x, y, width, height, fillColor = 0xffffff, bgColor = 0x
   container.height = height;
   return container;
 }
+function createPointsBar(x, y, width, height, fillColor = 0xffffff, bgColor = 0x234fff) {
+  const container = new PIXI.Container();
+  const background = rectangle(0, 0, width, height, bgColor);
+  const text = new PIXI.Text('Очки', { fontFamily: 'Helvetica', fill: 0x000000, fontWeight: 'bold' });
+  container.addChild(background);
+  container.addChild(text);
+  text.y = 5;
+  container.x = x;
+  container.y = y;
+  container.width = width;
+  container.height = height;
+  return container;
+}
 
-let lineOfBlocks = createLineOfBlocks(3, 200, 10, 150);
+
+let lineOfBlocks = createLineOfBlocks(3, 200, 60, 150);
 const healthBar = createHealthBar(0, 10, 350, 40);
+const pointsBar = createPointsBar(innerWidth - 250, 10, 250, 40);
 
 function checkRocketAndBlocksCollision(rocket: PIXI.Container, blocks: PIXI.Container) {
   if (!rocket || !blocks) {
@@ -269,18 +277,24 @@ function handleGameState() {
       gameStateContainer.addChild(gameOverScreen(store.points));
       created = true;
     }
+  } else {
+    pointsBar.children[1].text = 'Очки ' + store.points;
   }
-
   requestAnimationFrame(handleGameState);
 }
 
 let wasHit: boolean = false;
 function animateBlocks() {
+  if (store.gameEnd) {
+    lineOfBlocks.visible = false;
+  } else {
+    lineOfBlocks.visible = true;
+  }
   if (store.animateBlocks) {
     // Шорт-хенд для изменения контейнера, содержашего блоки
     // TODO: Создать отдельный контейнер для блоков, т.к. при анимации бекграунда ломается коллизия
-    const container = cosmoBackground;
-    container.removeChild(cosmoBackground);
+    const container = app.stage;
+    container.removeChild(container);
     container.addChild(lineOfBlocks);
     lineOfBlocks.y += store.gameSpeed;
     if (!wasHit && checkRocketAndBlocksCollision(rocket, lineOfBlocks)) {
@@ -334,6 +348,7 @@ function initKeyboardEvents() {
 
 app.stage.addChild(rocket);
 app.stage.addChild(healthBar);
+app.stage.addChild(pointsBar);
 app.stage.addChild(gameStateContainer);
 
 rocket.interactive = true;

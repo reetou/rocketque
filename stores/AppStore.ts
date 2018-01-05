@@ -18,13 +18,13 @@ class AppStore implements IAppStore {
     this.api = api;
   }
 
-  @observable animateBackground = false;
+  @observable animateBackground = true;
   @observable animateBlocks = true;
   @observable showHealthBar = true;
 
   @observable hitAmount = 40;
   @observable health = 500;
-  @observable gameSpeed = 10;
+  @observable gameSpeed = 7;
 
   @observable pauseGame: boolean = false;
   @observable startNew = false;
