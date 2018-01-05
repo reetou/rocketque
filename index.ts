@@ -239,6 +239,7 @@ function startGame() {
   gameStateContainer.visible = false;
   store.animateBlocks = true;
   store.showHealthBar = true;
+  store.animateBackground = true;
   store.health = 350;
   store.startNew = true;
   rocket.x = app.renderer.width / 2 - rocket.width / 3;
@@ -273,6 +274,7 @@ function handleGameState() {
     store.showHealthBar = false;
     store.animateBackground = false;
     gameStateContainer.interactive = true;
+    app.stage.removeChild(lineOfBlocks)
     if (!created) {
       gameStateContainer.addChild(gameOverScreen(store.points));
       created = true;
