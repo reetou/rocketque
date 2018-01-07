@@ -158,6 +158,7 @@ function startGame() {
   gameStateContainer.visible = false;
   store.animateBlocks = true;
   store.showHealthBar = true;
+  store.showPointsBar = true;
   store.animateBackground = true;
   store.health = store.maxHealth;
   store.startNew = true;
