@@ -150,7 +150,7 @@ export function createHealthBar(x, y, width, height, fillColor = 0xffffff, bgCol
   const container = new PIXI.Container();
   const background = rectangle(0, 0, width, height, 0xff0000);
   const fill = rectangle(0, 0, width, height, fillColor);
-  const text = new PIXI.Text('ЗДАРОВЬЕ', { fontFamily: 'Helvetica', fill: 0x000000, fontWeight: 'bold' });
+  const text = new PIXI.Text('HP', { fontFamily: 'Helvetica', fill: 0x000000, fontWeight: 'bold' });
   container.addChild(background);
   container.addChild(fill);
   container.addChild(text);
