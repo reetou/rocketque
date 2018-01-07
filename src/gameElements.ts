@@ -144,7 +144,6 @@ export function createRocket(x: number, y: number, colors?: object) {
   container.addChild(body);
   container.addChild(rightWing);
   container.x = x - container.width / 3;
-  console.error('container width', container.width)
   container.y = y;
   return container;
 }

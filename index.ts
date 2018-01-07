@@ -1,7 +1,5 @@
 import * as PIXI from 'pixi.js';
-import * as particles from 'pixi-particles';
 import createStores from './stores/createStores';
-import * as _ from 'lodash';
 import { rectangle } from './utils/shapes';
 import {
   createHealthBar,
