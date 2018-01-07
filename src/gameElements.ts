@@ -117,7 +117,7 @@ function createFireParticle(container) {
   update();
 }
 
-gexport function createRocket(x: number, y: number) {
+export function createRocket(x: number, y: number, colors?: object) {
   const container = new PIXI.Container();
   const body = rectangle(20, 0, 30, 100);
   const leftA = new PIXI.Point(20, 50);
