@@ -2,13 +2,16 @@ import * as PIXI from 'pixi.js';
 import * as particles from 'pixi-particles';
 import createStores from './stores/createStores';
 import * as _ from 'lodash';
-import { circle, rectangle } from './utils/shapes';
+import { rectangle } from './utils/shapes';
 import {
   createHealthBar,
   createLineOfBlocks,
   createRocket,
   createPointsBar,
-} from './src/GameElements';
+  randomlyPlaceCosmoCirclesAt,
+  randomizeBlocksPositions,
+} from './src/gameElements';
+import { checkRocketAndBlocksCollision } from './src/collisionTest';
 
 
 const stores = createStores();
@@ -16,86 +19,6 @@ const { app: store } = stores;
 const app = new PIXI.Application(innerWidth, innerHeight);
 
 document.body.appendChild(app.view);
-
-function randomlyPlaceCosmoCirclesAt(container: PIXI.Container) {
-  for (let i = 1; i < innerWidth; i = i + 1) {
-    const randomX = _.random(1 + i, innerWidth - i * _.random(10));
-    const randomY = _.random(1 + i, innerHeight - _.random(100));
-    const cosmoCircle = circle(randomX, randomY, 1, 0xffffff);
-    container.addChild(cosmoCircle);
-  }
-}
-
-function checkRocketAndBlocksCollision(rocket: PIXI.Container, blocks: PIXI.Graphics[]) {
-  if (!rocket || !blocks) {
-    console.error('false');
-    return false;
-  }
-  let isHit = false;
-  for (let i = 0; i < blocks.length; i += 1) {
-    const block = blocks[i];
-    isHit = hitTestRectangle(rocket, block) && block.visible;
-    if (isHit) {
-      break;
-    }
-  }
-  return isHit;
-}
-
-function hitTestRectangle(r1, r2) {
-
-  // Define the variables we'll need to calculate
-  let hit;
-  let combinedHalfWidths;
-  let combinedHalfHeights;
-  let vx;
-  let vy;
-
-  // hit will determine whether there's a collision
-  hit = false;
-
-  // Find the center points of each sprite
-  r1.centerX = r1.x + r1.width / 2;
-  r1.centerY = r1.y + r1.height / 2;
-  r2.centerX = r2.x + r2.width / 2;
-  r2.centerY = r2.y + r2.height / 2;
-
-  // Find the half-widths and half-heights of each sprite
-  r1.halfWidth = r1.width / 2;
-  r1.halfHeight = r1.height / 2;
-  r2.halfWidth = r2.width / 2;
-  r2.halfHeight = r2.height / 2;
-
-  // Calculate the distance vector between the sprites
-  vx = r1.centerX - r2.centerX;
-  vy = r1.centerY - r2.centerY;
-
-  // Figure out the combined half-widths and half-heights
-  combinedHalfWidths = r1.halfWidth + r2.halfWidth;
-  combinedHalfHeights = r1.halfHeight + r2.halfHeight;
-
-  // Check for a collision on the x axis
-  if (Math.abs(vx) < combinedHalfWidths) {
-
-    // A collision might be occuring. Check for a collision on the y axis
-    if (Math.abs(vy) < combinedHalfHeights) {
-
-      // There's definitely a collision happening
-      hit = true;
-    } else {
-
-      // There's no collision on the y axis
-      hit = false;
-    }
-  } else {
-
-    // There's no collision on the x axis
-    hit = false;
-  }
-
-  // `hit` will be either `true` or `false`
-  return hit;
-}
 
 function createGameOverScreen(x, y, text = `ТЫ ПРОИГРАЛ`, style?) {
   const container = new PIXI.Container();
@@ -179,23 +102,6 @@ function pauseGame() {
   store.animateBackground = false;
   pauseText.visible = true;
   store.pauseGame = true;
-}
-
-function randomizeBlocksPositions(blocks, width, height, xStart) {
-  const random = _.random(1, 4);
-  return blocks.map((b, i) => {
-    if (i === 0) {
-      b.x = xStart;
-    } else {
-      b.x = _.random(xStart + 60, width - 100);
-    }
-    b.visible = true;
-    b.y = 10;
-    if (i + 1 > random) {
-      b.visible = false;
-    }
-    return b;
-  });
 }
 
 function handleGameState() {
@@ -299,8 +205,6 @@ function initKeyboardEvents() {
     }
   });
 }
-
-console.error('particles', PIXI.particles);
 
 const gameStateContainer = createGameStateContainer();
 const gameOverScreen = points => createGameOverScreen(

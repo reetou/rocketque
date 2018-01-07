@@ -1,6 +1,33 @@
-import * as PIXI from "pixi.js";
+import * as PIXI from 'pixi.js';
 import { circle, rectangle, triangle } from '../utils/shapes';
 import * as particles from 'pixi-particles';
+import * as _ from 'lodash';
+
+export function randomlyPlaceCosmoCirclesAt(container: PIXI.Container) {
+  for (let i = 1; i < innerWidth; i = i + 1) {
+    const randomX = _.random(1 + i, innerWidth - i * _.random(10));
+    const randomY = _.random(1 + i, innerHeight - _.random(100));
+    const cosmoCircle = circle(randomX, randomY, 1, 0xffffff);
+    container.addChild(cosmoCircle);
+  }
+}
+
+export function randomizeBlocksPositions(blocks, width, height, xStart) {
+  const random = _.random(1, 4);
+  return blocks.map((b, i) => {
+    if (i === 0) {
+      b.x = xStart;
+    } else {
+      b.x = _.random(xStart + 60, width - 100);
+    }
+    b.visible = true;
+    b.y = 10;
+    if (i + 1 > random) {
+      b.visible = false;
+    }
+    return b;
+  });
+}
 
 
 function createFireParticle(container) {
