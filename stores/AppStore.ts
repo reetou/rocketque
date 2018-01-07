@@ -12,14 +12,16 @@ interface IAppStore {
   startNew: boolean;
   points: number;
   hitOccurred: boolean;
+  showPointsBar: boolean;
 }
 
 export default
 class AppStore implements IAppStore {
 
-  @observable animateBackground = true;
-  @observable animateBlocks = true;
-  @observable showHealthBar = true;
+  @observable animateBackground = false;
+  @observable animateBlocks = false;
+  @observable showHealthBar = false;
+  @observable showPointsBar = false;
 
   @observable hitAmount = 40;
   @observable maxHealth = 350;
@@ -27,6 +29,7 @@ class AppStore implements IAppStore {
   @observable gameSpeed = 7;
   @observable hitOccurred = false;
 
+  @observable started = false;
   @observable pauseGame = false;
   @observable gameEnd = false;
   @observable startNew = false;

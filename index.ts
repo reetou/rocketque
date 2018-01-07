@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import * as particles from 'pixi-particles';
 import createStores from './stores/createStores';
 import * as _ from 'lodash';
 import { circle, rectangle } from './utils/shapes';
@@ -27,7 +28,7 @@ function randomlyPlaceCosmoCirclesAt(container: PIXI.Container) {
 
 function checkRocketAndBlocksCollision(rocket: PIXI.Container, blocks: PIXI.Graphics[]) {
   if (!rocket || !blocks) {
-    console.error('false')
+    console.error('false');
     return false;
   }
   let isHit = false;
@@ -121,6 +122,27 @@ function createGameOverScreen(x, y, text = `ТЫ ПРОИГРАЛ`, style?) {
   return container;
 }
 
+function createMainMenuScreen(x, y, style?) {
+  const container = new PIXI.Container();
+  const button: PIXI.Container = new PIXI.Container();
+  button.interactive = true;
+  button.buttonMode = true;
+  const playAgain: PIXI.Text = new PIXI.Text(
+    'Начать игру',
+    { fill: 0xff7776, fontFamily: 'Helvetica' },
+  );
+  const buttonBg = rectangle(0, 5, playAgain.width * 1.5, playAgain.height * 1.5, 0xff3333);
+  playAgain.x += 50;
+  playAgain.y += 10;
+  button.addChild(buttonBg);
+  button.addChild(playAgain);
+  button.x = x - button.width / 2;
+  button.y = y;
+  button.on('click', startGame);
+  container.addChild(button);
+  return container;
+}
+
 const createGameStateContainer = () => {
   const container = new PIXI.Container();
   const bg = rectangle(0, 0, app.renderer.width, app.renderer.height, 0x000000);
@@ -129,6 +151,10 @@ const createGameStateContainer = () => {
 };
 
 function startGame() {
+  if (!store.started) {
+    store.started = true;
+    mainMenuScreen.visible = false;
+  }
   gameStateContainer.visible = false;
   store.animateBlocks = true;
   store.showHealthBar = true;
@@ -172,6 +198,10 @@ function randomizeBlocksPositions(blocks, width, height, xStart) {
 }
 
 function handleGameState() {
+  if (!store.started) {
+    gameStateContainer.visible = true;
+    gameStateContainer.addChild(mainMenuScreen);
+  }
   if (store.startNew) {
     store.health = store.maxHealth;
     store.points = 0;
@@ -219,6 +249,7 @@ function animateBlocks() {
 
 function handleInterface() {
   healthBar.visible = store.showHealthBar;
+  pointsBar.visible = store.showPointsBar;
   requestAnimationFrame(handleInterface);
 }
 
@@ -249,7 +280,7 @@ function initKeyboardEvents() {
     }
     const canMove = (val: number, axis: number, compare: number) => {
       return axis + val >= 0 && axis + val <= compare;
-    }
+    };
     if (e.key === 'ArrowLeft' && canMove(-60, rocket.x, innerWidth)) {
       rocket.x -= 40;
     }
@@ -268,12 +299,19 @@ function initKeyboardEvents() {
   });
 }
 
+console.error('particles', PIXI.particles);
 
 const gameStateContainer = createGameStateContainer();
 const gameOverScreen = points => createGameOverScreen(
   app.renderer.width / 2,
   app.renderer.height / 3,
   `ТЫ ПРОИГРАЛ\nОчков набрано: ${points}`,
+  { fill: 0xff0000 },
+);
+
+const mainMenuScreen = createMainMenuScreen(
+  app.renderer.width / 2,
+  app.renderer.height / 3,
   { fill: 0xff0000 },
 );
 
