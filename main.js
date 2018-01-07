@@ -19,21 +19,6 @@ let windowOptions = {
 
 protocol.registerStandardSchemes(['test'])
 
-function createProtocolWithWindow() {
-	mainWindow = new BrowserWindow({
-		webPreferences: {
-			nodeIntegration: false
-		}
-	});
-	protocol.registerFileProtocol('test', function (request, callback) {
-		callback({ mimeType: 'text/html', data: fs.readFileSync(path.join(__dirname, 'index.html')) });
-	}, function (error) {
-		if (error) console.error('Failed to register protocol');
-	});
-
-	mainWindow.loadURL('test://index.html');
-}
-
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow(windowOptions)
