@@ -72,6 +72,9 @@ const createGameStateContainer = () => {
 };
 
 function startGame() {
+  if (store.gameEnd) {
+    store.gameEnd = false;
+  }
   if (!store.started) {
     store.started = true;
     mainMenuScreen.visible = false;
@@ -103,6 +106,7 @@ function pauseGame() {
 }
 
 function handleGameState() {
+  console.error('added over screen and set it to visible false');
   if (!store.started) {
     gameStateContainer.visible = true;
     gameStateContainer.addChild(mainMenuScreen);
@@ -119,8 +123,10 @@ function handleGameState() {
     store.animateBackground = false;
     gameStateContainer.interactive = true;
     if (!store.gameEnd) {
-      gameStateContainer.addChild(gameOverScreen(store.points));
       store.gameEnd = true;
+      gameOverScreen.visible = true;
+      gameOverScreen.children[0].text = `ТЫ ПРОИГРАЛ\nОчков набрано: ${store.points}`;
+      console.error('set gameover visible to true');
     }
   } else {
     pointsBar.children[1].text = 'Очки ' + store.points;
@@ -205,12 +211,14 @@ function initKeyboardEvents() {
 }
 
 const gameStateContainer = createGameStateContainer();
-const gameOverScreen = points => createGameOverScreen(
+const gameOverScreen = createGameOverScreen(
   app.renderer.width / 2,
   app.renderer.height / 3,
-  `ТЫ ПРОИГРАЛ\nОчков набрано: ${points}`,
+  `ТЫ ПРОИГРАЛ\nОчков набрано: ${store.points}`,
   { fill: 0xff0000 },
 );
+gameStateContainer.addChild(gameOverScreen);
+gameOverScreen.visible = false;
 
 const mainMenuScreen = createMainMenuScreen(
   app.renderer.width / 2,
