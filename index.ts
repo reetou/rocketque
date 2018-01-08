@@ -106,7 +106,6 @@ function pauseGame() {
 }
 
 function handleGameState() {
-  console.error('added over screen and set it to visible false');
   if (!store.started) {
     gameStateContainer.visible = true;
     gameStateContainer.addChild(mainMenuScreen);
@@ -126,7 +125,6 @@ function handleGameState() {
       store.gameEnd = true;
       gameOverScreen.visible = true;
       gameOverScreen.children[0].text = `ТЫ ПРОИГРАЛ\nОчков набрано: ${store.points}`;
-      console.error('set gameover visible to true');
     }
   } else {
     pointsBar.children[1].text = 'Очки ' + store.points;
